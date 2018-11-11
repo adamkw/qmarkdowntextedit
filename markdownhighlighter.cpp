@@ -208,6 +208,14 @@ void MarkdownHighlighter::initHighlightingRules() {
     rule.pattern = QRegularExpression("\\[(.+?)\\]\\s?\\[.+?\\]");
     _highlightingRulesAfter.append(rule);
 
+    // highlight wiki links
+    rule.pattern = QRegularExpression("\\[\\[(.+?)\\]\\]");
+    _highlightingRulesAfter.append(rule);
+
+    // highlight tags
+    rule.pattern = QRegularExpression("#(\\pL+)");
+    _highlightingRulesAfter.append(rule);
+
     // highlight images with text
     rule = HighlightingRule();
     rule.pattern = QRegularExpression("!\\[(.+?)\\]\\(.+?\\)");
