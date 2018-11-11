@@ -624,13 +624,15 @@ bool QMarkdownTextEdit::openLinkAtCursorPosition() {
                                                  positionFromStart);
     QUrl url = QUrl(urlString);
     bool isRelativeFileUrl = urlString.startsWith("file://..");
+    bool isNoteLink = urlString.startsWith("note://");
 
     qDebug() << __func__ << " - 'emit urlClicked( urlString )': "
              << urlString;
 
     emit urlClicked(urlString);
 
-    if ((url.isValid() && isValidUrl(urlString)) || isRelativeFileUrl) {
+    // Handle Note-Links via signals
+    if ((!isNoteLink && url.isValid() && isValidUrl(urlString)) || isRelativeFileUrl) {
         // ignore some schemata
         if (!(_ignoredClickUrlSchemata.contains(url.scheme()) ||
                 isRelativeFileUrl)) {
@@ -728,6 +730,28 @@ QMap<QString, QString> QMarkdownTextEdit::parseMarkdownUrlsFromText(
         QRegularExpressionMatch match = iterator.next();
         QString linkText = match.captured(1);
         QString url = match.captured(2);
+        urlMap[linkText] = url;
+    }
+
+    // match urls like this: [[note_id]]
+    // prepend 'note://' to the note_id.
+    regex = QRegularExpression("(\\[\\[(.+?)\\]\\])");
+    iterator = regex.globalMatch(text);
+    while (iterator.hasNext()) {
+        QRegularExpressionMatch match = iterator.next();
+        QString linkText = match.captured(1);
+        QString url = QString("note://").append(match.captured(2));
+        urlMap[linkText] = url;
+    }
+
+    // match urls like this: #tag
+    // prepend 'note://' to the tag.
+    regex = QRegularExpression("(#(\\pL+))");
+    iterator = regex.globalMatch(text);
+    while (iterator.hasNext()) {
+        QRegularExpressionMatch match = iterator.next();
+        QString linkText = match.captured(1);
+        QString url = QString("note://").append(match.captured(2));
         urlMap[linkText] = url;
     }
 
