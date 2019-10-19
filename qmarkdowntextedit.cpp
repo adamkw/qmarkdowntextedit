@@ -885,6 +885,28 @@ QMap<QString, QString> QMarkdownTextEdit::parseMarkdownUrlsFromText(
         urlMap[linkText] = url;
     }
 
+    // match urls like this: [[note_id]]
+    // prepend 'notesearch://' to the note_id.
+    regex = QRegularExpression("(\\[\\[(.+?)\\]\\])");
+    iterator = regex.globalMatch(text);
+    while (iterator.hasNext()) {
+        QRegularExpressionMatch match = iterator.next();
+        QString linkText = match.captured(1);
+        QString url = QString("notesearch://").append(match.captured(2));
+        urlMap[linkText] = url;
+    }
+
+    // match urls like this: #tag
+    // prepend 'notesearch://' to the tag.
+    regex = QRegularExpression("(#(\\pL+))");
+    iterator = regex.globalMatch(text);
+    while (iterator.hasNext()) {
+        QRegularExpressionMatch match = iterator.next();
+        QString linkText = match.captured(1);
+        QString url = QString("notesearch://").append(match.captured(2));
+        urlMap[linkText] = url;
+    }
+
     // match urls like this: http://mylink
     regex = QRegularExpression(R"(\b\w+?:\/\/[^\s]+[^\s>\)])");
     iterator = regex.globalMatch(text);
