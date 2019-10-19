@@ -898,12 +898,12 @@ QMap<QString, QString> QMarkdownTextEdit::parseMarkdownUrlsFromText(
 
     // match urls like this: #tag
     // prepend 'notesearch://' to the tag.
-    regex = QRegularExpression("(#(\\pL+))");
+    regex = QRegularExpression("(#+(\\pL+))");
     iterator = regex.globalMatch(text);
     while (iterator.hasNext()) {
         QRegularExpressionMatch match = iterator.next();
         QString linkText = match.captured(1);
-        QString url = QString("notesearch://").append(match.captured(2));
+        QString url = QString("notesearch://").append(match.captured(1));
         urlMap[linkText] = url;
     }
 

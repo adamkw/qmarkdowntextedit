@@ -232,7 +232,7 @@ void MarkdownHighlighter::initHighlightingRules() {
         _highlightingRulesAfter.append(rule);
 
         // highlight #tags
-        rule.pattern = QRegularExpression("#(\\pL+)");
+        rule.pattern = QRegularExpression("#+(\\pL+)");
         _highlightingRulesAfter.append(rule);
 
     }
